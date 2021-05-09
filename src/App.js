@@ -5,17 +5,18 @@ import React from "react";
 const myCities={
   cities:[],
 };
+let idcity = 1
 
-
-export const reducer=(state = myCities,action) => {
+export const reducer=(state = myCities, action) => {
   switch(action.type){
     case 'AddCity':
-    return {
-          ...state, cities: state.cities.push(action.payload)
-    } 
+    action.payload.id = idcity++
+    return { ...state, cities: [...state.cities, action.payload] } 
 
     case 'RemoveCity':
-      return state.cities.filter(item => item.id === action.payload.id)
+      return {
+        cities : state.cities.filter(item => item.id !== action.payload) 
+      }
       
     
     default:
@@ -28,18 +29,18 @@ export const reducer=(state = myCities,action) => {
 
 // ACTIONS -----------------------
 // por como esta diseñado el test, el id de la ciudad deberian colocarla al momento de agregarlo en el reducer
- export const addCity = (arg) => {
-   let idcity = 1
+ export const addCity = (payload) => {
+
    return {
    type: "AddCity",
-    payload: {...arg, id: idcity+1}
+    payload
    }
  }
 
  export const removeCity = (payload) => {
    return {
     type: "RemoveCity",
-   payload: {id: payload} 
+   payload 
   }
  }
 
@@ -60,11 +61,12 @@ export const App=() => {
   })
 
   // e: nombre del campo del formulario que se esté cambiando
-  const HandleChange = (e) => {              
+  const HandleChange = (e) => {     
+    console.log(state)         
     useState({
       ...state,
       [e.target.name]: e.target.value
-    })
+    } )
   }
 
 
@@ -84,7 +86,7 @@ export const App=() => {
       <input name="temperatura"  value={state.temperatura} onChange={HandleChange} ></input>
       </div>
       <div>
-        <button type="submit"/*  onClick={reducer(state, addCity(payload))} */>Agregar Ciudad</button> 
+        <button type="submit">Agregar Ciudad</button> 
         </div>
       </form>
     </div>
